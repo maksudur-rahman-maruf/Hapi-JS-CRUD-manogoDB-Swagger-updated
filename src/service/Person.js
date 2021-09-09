@@ -1,7 +1,6 @@
 const moment = require('moment');
 const PersonModel = require('../model/Person');
 const HistoryModel = require('../model/History');
-const { x } = require('joi');
 
 const createPersonService = async (request) => {
     try {
@@ -58,60 +57,56 @@ const deletePersonService = async (request) => {
 
 const getHistoryListService = async (request, h) => {
 
-    /* With MongoDB Queries */
+    /* With Corner Case */
 
     try {
-        let certainDateFromNow = moment().subtract(10, 'minutes').toDate();
-        
+        let certainDateFromNow = moment().subtract(1, 'minutes').toDate();
+        let now = new Date();
+        let noOfDocsInThisDateRange = await HistoryModel.countDocuments(
+            { createdAt: { $gte: certainDateFromNow, $lte: now } });
+        let minimumDocRequire = 4;
+        let extraDocNeeded = 0;
+        if (noOfDocsInThisDateRange < minimumDocRequire) {
+            extraDocNeeded = minimumDocRequire - noOfDocsInThisDateRange;
+        }
+
         let histories = await HistoryModel.find(
             { createdAt: { $lte: certainDateFromNow } },
-            null,
-            { sort: { createdAt: -1 }, skip: 5 },
-
-            function (err, docs) {
-                docs.forEach(function (doc) {
-                    doc.remove();
-                });
-            }
+            ' _id',
+            { sort: { createdAt: -1 }, skip: extraDocNeeded },
         );
 
-        return histories;
+        return await HistoryModel.deleteMany({ _id: { $in: histories } });
 
     } catch (error) {
         return h.response(error).code(500);
     }
 
-    /* With Corner Case */
+
+     /* With MongoDB Queries */
 
     // try {
-    //     let certainDateFromNow = moment().subtract(1, 'days').toDate();
-    //     let now = new Date();
-    //     let noOfDocsInThisDateRange = (await HistoryModel.find(
-    //         { createdAt: { $gte: certainDateFromNow, $lte: now } })).length;
-    //     let minimumDocRequire = 5;
-    //     let extraDocNeeded = 0;
-    //     if(noOfDocsInThisDateRange < minimumDocRequire)
-    //     {
-    //         extraDocNeeded = minimumDocRequire - noOfDocsInThisDateRange;
-    //     }
-        
-    //     let histories = await HistoryModel.find(
-    //         { createdAt: { $lte: certainDateFromNow } },
-    //         null,
-    //         { sort: { createdAt: -1 }, skip: extraDocNeeded },
+    //     let certainDateFromNow = moment().subtract(10, 'minutes').toDate();
 
-    //         function (err, docs) {
-    //             docs.forEach(function (doc) {
-    //                 doc.remove();
-    //             });
-    //         }
-    //     );
+    // let histories = await HistoryModel.find(
+    //     { createdAt: { $lte: certainDateFromNow } },
+    //     null,
+    //     { sort: { createdAt: -1 }, skip: 5 },
+
+    //     function (err, docs) {
+    //         docs.forEach(function (doc) {
+    //             doc.remove();
+    //         });
+    //     }
+    // );
 
     //     return histories;
 
     // } catch (error) {
     //     return h.response(error).code(500);
     // }
+
+
 
     /* With Plain JS Code */
 
