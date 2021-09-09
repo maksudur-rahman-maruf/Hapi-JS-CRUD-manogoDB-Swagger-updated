@@ -1,0 +1,25 @@
+{
+  "name": "hapi-js-mongo-db-crud-swagger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^20.1.5",
+    "@hapi/inert": "^6.0.3",
+    "@hapi/vision": "^6.1.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "hapi-swagger": "^14.2.4",
+    "joi": "^17.4.2",
+    "moment": "^2.29.1",
+    "mongoose": "^5.13.7",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.12"
+  }
+}
