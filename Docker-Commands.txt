@@ -1,0 +1,26 @@
+
+Commands for Docker: 
+
+Using Docker file
+[
+
+// Building image
+docker build -t node-docker-tutorial .
+
+// Run image with interactive mode
+docker run -it -p 9001:3009 --name expressapp node-docker-tutorial
+
+docker run -it -p 9002:3000 --name reactapp react-docker-app
+
+]
+
+Using Docker Compose
+[
+
+// Building image
+docker-compose build
+
+// Run
+docker-compose up
+
+]
